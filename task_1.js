@@ -6,14 +6,20 @@ var PATH = '/I/want/title';
 
 app.get(PATH, function (req, res) {
 
-  addresses = parseURL(req.url).address;
-  titles	= [];
-  list_of_titles = '';
-  
-  get_titles(addresses, function(titles){
-    console.log(titles);
-    res.send(list_of_titles);
-  });
+  addresses = parseURL(req.url);
+  if(addresses){
+    titles  = [];
+    list_of_titles = '';
+    
+    get_titles(addresses, function(titles){
+      console.log(titles);
+      res.send(list_of_titles);
+    });
+
+  }
+  else{
+    res.send('<h1>No address was present in the parameters');
+  }
 });
 
 app.listen(3000, function () {
@@ -30,7 +36,17 @@ function parseURL(req_url){
   var url = require('url');
   var url_parts = url.parse(req_url, true);
   var query = url_parts.query;
-  return query;			
+  if (query.address){
+    if(typeof(query.address) === 'string'){
+      return [query.address];
+    }
+    else{
+      return query.address;
+    }
+  }	
+  else{
+    return null;
+  }		
 }
 
 function get_titles(addresses, onComplete) {
@@ -64,7 +80,7 @@ function extractTitle(body){
       console.log(title_result[1]);
     }
     else{
-      title = 'No Title Found'.	
+      title = 'No Title Found';
       console.log('No title found.');
     }
   }         		
