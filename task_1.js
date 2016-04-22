@@ -10,7 +10,7 @@ app.get(PATH, function (req, res) {
   if(addresses){
     titles  = [];
     list_of_titles = '';
-    
+
     get_titles(addresses, function(titles){
       console.log(titles);
       res.send(list_of_titles);
@@ -43,18 +43,18 @@ function parseURL(req_url){
     else{
       return query.address;
     }
-  }	
+  }
   else{
     return null;
-  }		
+  }
 }
 
 function get_titles(addresses, onComplete) {
-  getSingleTitle(addresses.shift(), onComplete);	
+  getSingleTitle(addresses.shift(), onComplete);
 }
 
 function moveToNextOrEnd(address, title, onComplete){
-  titles.push({address, title });
+  titles.push({'address': address, 'title' : title  });
   list_of_titles = list_of_titles + '<li> ' + address + ' - ' + title;
   if(addresses.length > 0){
     next_path = addresses.shift();
@@ -62,7 +62,7 @@ function moveToNextOrEnd(address, title, onComplete){
   }
   else{
     onComplete(titles);
-  } 
+  }
 }
 
 function extractTitle(body){
@@ -83,32 +83,31 @@ function extractTitle(body){
       title = 'No Title Found';
       console.log('No title found.');
     }
-  }         		
+  }
   console.log('=============================');
   return title;
 }
 
 function getSingleTitle(address, onComplete){
-  
+
   if (address) {
     body = '';
     title = '';
     http.get('http://'+address, function(res) {
-      console.log(`Got response: ${res.statusCode}`);	
+      console.log('Got response: ${res.statusCode}');
       res.on('data', function(chunk) {
-	body += chunk;
+	       body += chunk;
       });
       res.on('end', function() {
-	title = extractTitle(body);
+	      title = extractTitle(body);
         moveToNextOrEnd(address, title, onComplete);
-        
+
       });
       res.resume();
      }).on('error', function(e) {
       title = 'No Response';
-      moveToNextOrEnd(address, title, onComplete);	
-      console.log(`Got error: ${e.message}`);
+      moveToNextOrEnd(address, title, onComplete);
+      console.log('Got error: ${e.message}');
      });
-  } 
+  }
 }
-

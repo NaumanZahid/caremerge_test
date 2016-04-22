@@ -43,10 +43,10 @@ function parseURL(req_url){
     else{
       return query.address;
     }
-  } 
+  }
   else{
     return null;
-  }   
+  }
 }
 
 function extractTitle(body){
@@ -67,36 +67,35 @@ function extractTitle(body){
       title = 'No Title Found';
       console.log('No title found.');
     }
-  }             
+  }
   console.log('=============================');
   return title;
 }
 
 function getSingleTitle(address, onComplete){
-  
+
   if (address) {
     body = '';
     title = '';
     http.get('http://'+address, function(res) {
-      console.log(`Got response: ${res.statusCode}`); 
+      console.log('Got response: ${res.statusCode}');
       res.on('data', function(chunk) {
         body += chunk;
       });
       res.on('end', function() {
         title = extractTitle(body);
-        titles.push({address, title });
+        titles.push({'address': address, 'title' : title  });
         list_of_titles = list_of_titles + '<li> ' + address + ' - ' + title;
         onComplete();
-        
+
       });
       res.resume();
      }).on('error', function(e) {
       title = 'No Response';
-      titles.push({address, title });
+      titles.push({'address': address, 'title' : title  });
       list_of_titles = list_of_titles + '<li> ' + address + ' - ' + title;
       onComplete();
-      console.log(`Got error: ${e.message}`);
+      console.log('Got error: ${e.message}');
      });
-  } 
+  }
 }
-
